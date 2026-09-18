@@ -1,19 +1,23 @@
 const sqlite3 = require('sqlite3').verbose();
 
-const path  = require("path")
+const path  = require("path");
+
+// Use DB_PATH env var to support persistent storage on Render Disk.
+// In Render: set DB_PATH=/data/database.db and mount a Disk at /data
+// Falls back to local file for development.
+const dbPath = process.env.DB_PATH
+    || path.join(__dirname, "database.db");
 
 const db = new sqlite3.Database(
-    path.join(__dirname,"database.db"), 
-    (err)=>{
-    if(err){
-        console.log("error in connecting to database", err.message);
-    }
-    else{
-        console.log("connected to database");
+    dbPath,
+    (err) => {
+    if (err) {
+        console.error("Error connecting to database:", err.message);
+    } else {
+        console.log(`Connected to SQLite database at: ${dbPath}`);
         db.run("PRAGMA foreign_keys = ON;");
     }
-
-})
+});
 
 
 db.serialize(()=>{

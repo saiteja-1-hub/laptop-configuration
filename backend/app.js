@@ -19,8 +19,16 @@ const errorMiddleware =
 const app = express();
 
 
-// Middleware
-app.use(cors());
+// CORS — allow the deployed frontend URL (set FRONTEND_URL in Render env vars)
+// Falls back to allowing all origins for local development
+const corsOptions = process.env.FRONTEND_URL
+    ? {
+        origin: process.env.FRONTEND_URL,
+        credentials: true
+    }
+    : {};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 
